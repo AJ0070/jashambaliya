@@ -1,0 +1,168 @@
+---
+import "@pagefind/default-ui/css/ui.css";
+---
+
+<div id="search-overlay" class="fixed inset-0 z-[100] hidden">
+  <div id="search-backdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+  <div class="relative flex items-start justify-center pt-[10vh] sm:pt-[15vh] px-4 h-full">
+    <div id="search-panel" class="w-full max-w-2xl max-h-[80vh] bg-skin-fill border border-skin-line/20 rounded-xl shadow-2xl flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-6 pt-5 pb-3">
+        <span class="text-xs font-mono uppercase tracking-widest text-skin-base/50">Search</span>
+        <button id="search-close-btn" class="cursor-pointer rounded-md bg-skin-card px-3 py-1 text-sm font-medium text-skin-base/70 hover:text-skin-base transition-colors">
+          Esc
+        </button>
+      </div>
+      <div class="px-6 pb-6 overflow-y-auto flex-1 min-h-0">
+        {
+          import.meta.env.DEV ? (
+            <div class="text-center py-8 text-skin-base/60">
+              <p>
+                Search is only available in production builds. <br />
+                Try building and previewing the site to test it out locally.
+              </p>
+            </div>
+          ) : (
+            <div id="cactus__search" />
+          )
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupSearch() {
+    const el = document.getElementById("search-overlay");
+    const backdrop = document.getElementById("search-backdrop");
+    const closeBtn = document.getElementById("search-close-btn");
+    if (!el) return;
+    const overlay: HTMLElement = el;
+
+    let pagefindLoaded = false;
+
+    function openSearch() {
+      overlay.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+
+      if (!pagefindLoaded && !import.meta.env.DEV) {
+        pagefindLoaded = true;
+        const onIdle = window.requestIdleCallback || ((cb: () => void) => setTimeout(cb, 1));
+        onIdle(async () => {
+          const { PagefindUI } = await import("@pagefind/default-ui");
+          new PagefindUI({
+            baseUrl: import.meta.env.BASE_URL,
+            bundlePath: import.meta.env.BASE_URL.replace(/\/$/, "") + "/pagefind/",
+            element: "#cactus__search",
+            showImages: false,
+            showSubResults: true,
+          });
+          overlay.querySelector<HTMLInputElement>(".pagefind-ui__search-input")?.focus();
+        });
+      } else {
+        requestAnimationFrame(() => {
+          overlay.querySelector<HTMLInputElement>(".pagefind-ui__search-input")?.focus();
+        });
+      }
+    }
+
+    function closeSearch() {
+      overlay.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+
+    document.addEventListener("open-search", openSearch);
+
+    backdrop?.addEventListener("click", closeSearch);
+    closeBtn?.addEventListener("click", closeSearch);
+
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !overlay.classList.contains("hidden")) {
+        closeSearch();
+        e.preventDefault();
+      }
+      if (e.key === "/" && overlay.classList.contains("hidden")) {
+        const active = document.activeElement;
+        const isInput = active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement;
+        if (!isInput) {
+          openSearch();
+          e.preventDefault();
+        }
+      }
+    });
+  }
+
+  setupSearch();
+  document.addEventListener("astro:after-swap", setupSearch);
+</script>
+
+<style is:global>
+  :root {
+    --pagefind-ui-font: inherit;
+  }
+
+  #cactus__search .pagefind-ui__search-clear {
+    width: calc(60px * var(--pagefind-ui-scale));
+    padding: 0;
+    background-color: transparent;
+    overflow: hidden;
+  }
+  #cactus__search .pagefind-ui__search-clear:focus {
+    outline: 1px solid theme("colors.accent-2");
+  }
+  #cactus__search .pagefind-ui__search-clear::before {
+    content: "";
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E")
+      center / 60% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E")
+      center / 60% no-repeat;
+    background-color: theme("colors.accent");
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #cactus__search .pagefind-ui__result {
+    border: 0;
+  }
+
+  #cactus__search .pagefind-ui__result-link {
+    background-size: 100% 6px;
+    background-position: bottom;
+    background-repeat: repeat-x;
+    background-image: linear-gradient(
+      transparent,
+      transparent 5px,
+      theme("colors.textColor") 5px,
+      theme("colors.textColor")
+    );
+  }
+
+  #cactus__search .pagefind-ui__result-link:hover {
+    text-decoration: none;
+    background-image: linear-gradient(
+      transparent,
+      transparent 4px,
+      theme("colors.link") 4px,
+      theme("colors.link")
+    );
+  }
+
+  #cactus__search mark {
+    color: theme("colors.quote");
+    background-color: transparent;
+    font-weight: 600;
+  }
+  .search-svg {
+    fill: none;
+  }
+</style>
+
+<style>
+  #cactus__search {
+    --pagefind-ui-primary: theme("colors.accent");
+    --pagefind-ui-text: theme("colors.textColor");
+    --pagefind-ui-background: theme("colors.bgColor");
+    --pagefind-ui-border: theme("colors.zinc.400");
+    --pagefind-ui-border-width: 1px;
+  }
+</style>

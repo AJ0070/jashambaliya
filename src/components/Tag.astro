@@ -1,0 +1,36 @@
+---
+import { TbHash } from "react-icons/tb";
+import { slugifyStr } from "@utils/slugify";
+
+export interface Props {
+  tag: string;
+  size?: "sm" | "lg";
+}
+
+const { tag, size = "sm" } = Astro.props;
+---
+
+<li
+  class={`inline-block ${
+    size === "sm" ? "my-1 underline-offset-4" : "my-3 mx-1 underline-offset-8"
+  }`}
+>
+  <a
+    href={`/tags/${slugifyStr(tag)}/`}
+    transition:name={slugifyStr(tag)}
+    class={`${size === "sm" ? "text-sm" : "text-lg"} pr-2 group`}
+    data-pagefind-filter="tag"
+  >
+    <TbHash className={`${size === "sm" ? " scale-75" : "scale-110"}`} />
+    &nbsp;<span>{tag}</span>
+  </a>
+</li>
+
+<style>
+  a {
+    @apply relative underline decoration-dashed hover:-top-0.5 hover:text-skin-accent focus-visible:p-1;
+  }
+  a svg {
+    @apply -mr-1 h-6 w-6 scale-95 text-skin-base opacity-80 group-hover:text-skin-accent;
+  }
+</style>

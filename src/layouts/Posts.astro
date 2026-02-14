@@ -1,0 +1,49 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Main from "@layouts/Main.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Pagination from "@components/Pagination.astro";
+import Card from "@components/Card";
+import { SITE } from "@config";
+import type { Page } from "astro";
+import type { CollectionEntry } from "astro:content";
+import { getPublications } from "@utils/bibtexUtils";
+
+export interface Props {
+  page: Page<CollectionEntry<"blog">>;
+}
+
+const { page } = Astro.props;
+const publications = await getPublications();
+
+const getRelatedPubs = (tags: string[]) => {
+  return publications.filter(pub => 
+    pub.entryTags.keywords && tags.some(tag => pub.entryTags.keywords?.toLowerCase().includes(tag.toLowerCase()))
+  ).map(pub => ({ title: pub.entryTags.title || "", url: pub.entryTags.url }));
+};
+
+const globalIndex = (page.currentPage - 1) * page.size;
+---
+
+<Layout title={`Blogs | ${SITE.title}`}>
+  <Header activeNav="blog" />
+  <Main pageTitle="Blogs" pageDesc={`${page.total} posts — A collection of my writings on research, technology, and development.`}>
+    <ul>
+      {
+        page.data.map(({ data, slug }, index) => (
+          <Card 
+            href={`/blog/${slug}/`} 
+            frontmatter={data}
+            index={globalIndex + index + 1}
+            relatedPublications={getRelatedPubs(data.tags)}
+          />
+        ))
+      }
+    </ul>
+  </Main>
+
+  <Pagination {page} />
+
+  <Footer noMarginTop={page.lastPage > 1} />
+</Layout>
