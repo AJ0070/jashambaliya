@@ -12,9 +12,6 @@ export interface Project {
   techStack: string[];
   liveLink?: string;
   githubLink?: string;
-  imageSrc?: string;
-  imageSrcLight?: string;
-  imageSrcDark?: string;
 }
 
 export interface Props {
@@ -38,42 +35,16 @@ const { frontmatter } = Astro.props;
         {frontmatter.title}
       </h1>
       <p class="text-sm text-skin-base/70">
-        {frontmatter.projects.length} {frontmatter.projects.length === 1 ? 'project' : 'projects'}
+        {frontmatter.projects.length}
+        {frontmatter.projects.length === 1 ? "project" : "projects"}
       </p>
     </div>
 
     <!-- Projects List -->
     <div class="space-y-4">
-        {frontmatter.projects.map((project) => (
+      {
+        frontmatter.projects.map((project) => (
           <article class="group flex flex-col sm:flex-row gap-4 p-4 rounded-lg border border-skin-line/20 bg-skin-card/5 transition-all hover:border-skin-line/40 hover:bg-skin-card/10">
-            {/* Image */}
-            <div class="flex w-full sm:w-32 h-24 sm:h-auto shrink-0 items-center justify-center bg-skin-fill/30 rounded-md p-3 border border-skin-line/10">
-              {project.imageSrcLight && project.imageSrcDark ? (
-                <>
-                  <img
-                    src={project.imageSrcLight}
-                    alt={project.title}
-                    class="theme-image-light w-full h-full object-contain"
-                    loading="lazy"
-                  />
-                  <img
-                    src={project.imageSrcDark}
-                    alt={project.title}
-                    class="theme-image-dark w-full h-full object-contain"
-                    loading="lazy"
-                    style="display: none;"
-                  />
-                </>
-              ) : (
-                <img
-                  src={project.imageSrc || project.imageSrcLight || project.imageSrcDark}
-                  alt={project.title}
-                  class="w-full h-full object-contain"
-                  loading="lazy"
-                />
-              )}
-            </div>
-
             {/* Content */}
             <div class="flex-1 min-w-0">
               <div class="flex items-start justify-between gap-3 mb-2">
@@ -119,33 +90,9 @@ const { frontmatter } = Astro.props;
               </div>
             </div>
           </article>
-        ))}
-      </div>
+        ))
+      }
+    </div>
   </main>
   <Footer />
 </Layout>
-
-<style>
-  /* Theme-based image visibility */
-  :global(html[data-theme="light"]) .theme-image-dark,
-  :global(html[data-theme="latte"]) .theme-image-dark {
-    display: none !important;
-  }
-  :global(html[data-theme="light"]) .theme-image-light,
-  :global(html[data-theme="latte"]) .theme-image-light {
-    display: block !important;
-  }
-
-  :global(html[data-theme="dark"]) .theme-image-light,
-  :global(html[data-theme="frappe"]) .theme-image-light,
-  :global(html[data-theme="macchiato"]) .theme-image-light,
-  :global(html[data-theme="mocha"]) .theme-image-light {
-    display: none !important;
-  }
-  :global(html[data-theme="dark"]) .theme-image-dark,
-  :global(html[data-theme="frappe"]) .theme-image-dark,
-  :global(html[data-theme="macchiato"]) .theme-image-dark,
-  :global(html[data-theme="mocha"]) .theme-image-dark {
-    display: block !important;
-  }
-</style>
