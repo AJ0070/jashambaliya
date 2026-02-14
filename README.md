@@ -1,4 +1,4 @@
-# Shravan Goswami's Personal Portfolio Website
+# Jash Ambaliya's Personal Portfolio Website
 
 Welcome to my personal portfolio website! This project showcases my skills, projects, and professional experience.
 
@@ -31,11 +31,11 @@ To set up the project locally, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/shravanngoswamii/shravanngoswamii.github.io.git
+   git clone https://github.com/AJ0070/jashambaliya.git
    ```
 2. Navigate to the project directory:
    ```bash
-   cd shravanngoswamii.github.io
+   cd jashambaliya
    ```
 3. Install the dependencies:
    ```bash
@@ -71,4 +71,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-You can reach me via [LinkedIn](https://www.linkedin.com/in/shravangoswami) or [Email](mailto:contact@shravangoswami.com).
+You can reach me via [LinkedIn](https://www.linkedin.com/in/jash0070) or [Email](mailto:jashambaliya1@gmail.com).
