@@ -3,8 +3,6 @@ import { LOCALE, SITE } from "@config";
 import "@styles/base.css";
 import { ClientRouter } from "astro:transitions";
 
-const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
-
 export interface Props {
   title?: string;
   author?: string;
@@ -59,11 +57,10 @@ const structuredData = {
   <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1GX9J4N5K"></script>
-    <script>
+    <script is:inline>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
+      function gtag(){window.dataLayer.push(arguments);}
+      gtag('js');
       gtag('config', 'G-Z1GX9J4N5K');
     </script>
     <meta charset="UTF-8" />
